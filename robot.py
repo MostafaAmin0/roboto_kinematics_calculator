@@ -1,5 +1,17 @@
 import numpy as np
 
+#-------------------------------------------------------
+# global variables
+
+#  A1=[[1,1,1,1],
+#       [1,1,1,1],
+#       [1,1,1,1],
+#       [0,0,0,1],
+#     ]
+# listA = [ A1 , A2 , ...]
+
+# and so on for TF
+
 #--------------------------------------------------------
 #set the manipulator configurations
 
@@ -13,7 +25,7 @@ def setDHParameter():
 
 #------------------------------------------------------
 #helper functions to return the A matrices
-#A1
+# A1 is 2d matrix 
 def matrix_A():
     pass
 
