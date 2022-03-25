@@ -9,10 +9,11 @@ list_A =[ [ [0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]] ,
           [ [1,0,0,0],[0,0,1,0],[0,-1,0,2],[0,0,0,1]] ,
           [ [1,0,0,0],[0,1,0,0],[0,0,1,4],[0,0,0,1]] ]
 
-list_TF=[
-         [[0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]],
-         [[0,0,-1,0],[1,0,0,0],[0,-1,0,3],[0,0,0,1]],
-         [[0,0,-1,-4],[1,0,0,0],[0,-1,0,3],[0,0,0,1]] ] 
+# list_TF=[
+#          [[0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]],
+#          [[0,0,-1,0],[1,0,0,0],[0,-1,0,3],[0,0,0,1]],
+#          [[0,0,-1,-4],[1,0,0,0],[0,-1,0,3],[0,0,0,1]] ] 
+list_TF=[]
 
 #--------------------------------------------------------
 #set the manipulator configurations
@@ -36,14 +37,19 @@ def list_A_matrix():
     pass
 
 #------------------------------------------------------
-#helper functions to return the Transformatiom matrices
-#T0
-def transformationMatrix ():
-    pass
+#helper function to return the Transformatiom matrices
 
 # T0----Tn
 def list_TF_matrix():
-    pass
+    global list_TF
+    
+    tf1 = list_A[0]
+    list_TF.append(tf1)
+    print(tf1)
+    for i in range (0,dof-1):
+        tf=np.dot( list_TF[i] , list_A[i+1] )
+        list_TF.append(tf.tolist())
+    print(list_TF)
 
 #-----------------------------------------------------
 #driver function to implement the forward kienmatics
@@ -95,7 +101,7 @@ def getJacobian():
             jv=[ z_i[0],z_i[1],z_i[2]]
             list_jv.append(jv)
     list_jv=np.transpose(list_jv)
-    print(list_jv)
+#     print(list_jv)
     
     #jw
     list_jw=[]
@@ -108,7 +114,7 @@ def getJacobian():
             jw=[0,0,0]
             list_jw.append(jw)
     list_jw=np.transpose(list_jw)
-    print(list_jw)
+#     print(list_jw)
     
     jacobian_matrix=np.concatenate((list_jv,list_jw),axis=0)
     print(jacobian_matrix)
@@ -131,5 +137,7 @@ def path_planning():
 # call your functions here and take input from user 
 
 print('alo')
+
+list_TF_matrix()
 
 getJacobian()
