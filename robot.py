@@ -3,7 +3,7 @@ import re
 
 #-------------------------------------------------------
 # global variables
-dof =3
+dof =0
 joints=''
 variables = ["a ", "Alpha ","d ","Theta "]
 
@@ -21,6 +21,8 @@ list_A = []
 #          [[0,0,-1,0],[1,0,0,0],[0,-1,0,3],[0,0,0,1]],
 #          [[0,0,-1,-4],[1,0,0,0],[0,-1,0,3],[0,0,0,1]] ] 
 list_TF=[]
+
+jacobian_matrix=[]
 
 #--------------------------------------------------------
 #set the manipulator configurations
@@ -49,7 +51,7 @@ def An_matrix(a,alpha,d,theta):
     
 # A1----An
 def list_A_matrix():
-    for i in range(rowsDH):
+    for i in range(dof):
         mat=np.around(An_matrix(DH[i][0],DH[i][1],DH[i][2],DH[i][3]),1)
         mat+=0.
         list_A.append(mat.tolist())
@@ -59,9 +61,8 @@ def list_A_matrix():
 #------------------------------------------------------
 #helper function to return the Transformatiom matrices
 
-# T0----Tn
+# T1----Tn
 def list_TF_matrix():
-    global list_TF
     
     tf1 = list_A[0]
     list_TF.append(tf1)
@@ -80,9 +81,6 @@ def fK ():
 #driver function to implement jacobian matrix
 
 def getJacobian():
-    global list_TF
-    global dof
-    global joints
     
     #get O0--->On
     #get z0-->Zn-1
@@ -160,16 +158,16 @@ while(not re.match("^[r|p|R|P]*$", joints)):
     print ("Error! Only letters r or p allowed!")
     joints=input('please enter joints type: ')
 
-rowsDH=len(joints)
+dof=len(joints)
 a=[]
 #take input matrix 
-for i in range(rowsDH):          # A for loop for row entries
+for i in range(dof):          # A for loop for row entries
     print('Variable for joint number ' + str(i+1))
     for j in range(4):      # A for loop for column entries
         print("please enter "+ variables[j])
         a.append(int(input()))
 DH=np.array(a)
-DH=DH.reshape(rowsDH,4)
+DH=DH.reshape(dof,4)
 list_A_matrix()
 list_TF_matrix()
 
