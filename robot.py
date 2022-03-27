@@ -46,8 +46,6 @@ def setDHParameter():
 #helper functions to return the A matrices
 # A1 is 2d matrix 
 def An_matrix(a,alpha,d,theta):
-    alpha=(float(alpha)/180.0)*np.pi
-    theta=(float(theta)/180.0)*np.pi
 
     An=[[np.cos(theta), -1*np.sin(theta)*np.cos(alpha),np.sin(theta)*np.sin(alpha),a*np.cos(theta)],
         [np.sin(theta),np.cos(theta)*np.cos(alpha),-1*np.cos(theta)*np.sin(alpha),a*np.sin(theta)],
@@ -280,25 +278,51 @@ joints=input('please enter joints type: ')
 while(not re.match("^[r|p|R|P]*$", joints)):
     print ("Error! Only letters r or p allowed!")
     joints=input('please enter joints type: ')
-
+joints=joints.lower()
 dof=len(joints)
-dhInput=[]
-#take input matrix 
-for i in range(dof):          # A for loop for row entries
-    print('Variable for joint number ' + str(i+1))
-    for j in range(4):      # A for loop for column entries
-        print("please enter "+ variables[j])
-        
-        inputData = float(input())
-        if variables[j] == "Alpha " or variables[j] == "Theta ":
-            inputData=(inputData/180.0)*pi
-    
-        dhInput.append(inputData)
+
+choice = input('type f for forward')
+if choice == 'f' :
+    dhInput=[]
+    #take input matrix 
+    for i in range(dof):          # A for loop for row entries
+        print('Variable for joint number ' + str(i+1))
+        for j in range(4):      # A for loop for column entries
+            print("please enter "+ variables[j])
+
+            inputData = float(input())
+            if variables[j] == "Alpha " or variables[j] == "Theta ":
+                inputData=(inputData/180.0)*np.pi
+
+            dhInput.append(inputData)
+else :
+    dhInput=[]
+    #take input matrix 
+    for i in range(dof):          # A for loop for row entries
+        print('Variable for joint number ' + str(i+1))
+        for j in range(4):      # A for loop for column entries
+            if (joints[i] == 'r' and j==3 ) or (joints[i] == 'p' and j==2 ):
+                dhInput.append(0)
+                continue
+                
+            print("please enter "+ variables[j])
+
+            inputData = float(input())
+            if variables[j] == "Alpha " or variables[j] == "Theta ":
+                inputData=(inputData/180.0)*pi
+
+            dhInput.append(inputData)
         
 DH=np.array(dhInput)
 DH=DH.reshape(dof,4)
-list_A_matrix()
-list_TF_matrix()
+
+if choice =='f':
+    list_A_matrix()
+    list_TF_matrix()
+    getJacobian()
+else :
+    # output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
+    ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0)
 
 # dummy data to test inverse kinmatics
 # joints ='RR'
@@ -306,7 +330,6 @@ list_TF_matrix()
 #     [2,0,0, 0.529],
 #     [2,0,0, 0.776],
 # ]
-# output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
-ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0)
 
-getJacobian()
+
+
