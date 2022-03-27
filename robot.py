@@ -38,11 +38,28 @@ dq=[]
 
 #DOF & type of joints
 def setJoints ():
-    pass
+    joints=input('please enter joints type: ')
+    while(not re.match("^[r|p|R|P]*$", joints)):
+        print ("Error! Only letters r or p allowed!")
+        joints=input('please enter joints type: ')
+    joints=joints.lower()
+    dof=len(joints)
+    return joints ,dof
+
+    
 
 # DH Parameter
-def setDHParameter():
-    pass
+def setDHParameter(dof):
+    dhInput=[]
+    for i in range(dof):          # A for loop for row entries
+        print('Variable for joint number ' + str(i+1))
+        for j in range(4):      # A for loop for column entries
+            print("please enter "+ variables[j])
+            inputData = float(input())
+            if variables[j] == "Alpha " or variables[j] == "Theta ":
+                inputData=(inputData/180.0)*np.pi
+            dhInput.append(inputData)
+    return dhInput
 
 #------------------------------------------------------
 #helper functions to return the A matrices
@@ -80,14 +97,18 @@ def list_TF_matrix(list_A):
     for i in range (0,dof-1):
         tf=np.dot( list_TF[i] , list_A[i+1] )
         list_TF.append(tf.tolist())
-        
     return list_TF
 
 #-----------------------------------------------------
 #driver function to implement the forward kienmatics
 
-def fK ():
-    pass
+def fK (DH):
+    list_A = list_A_matrix(DH)
+    # print (list_A)
+    list_TF = list_TF_matrix(list_A)
+    tf_lenght=len(list_TF)-1    
+    # return list_TF,x,y,z
+    return list_TF , list_TF[2][0][3],list_TF[2][1][3],list_TF[2][2][3]
 
 #-----------------------------------------------------
 #driver function to implement jacobian matrix
@@ -391,28 +412,11 @@ def cubic_trajectory_planning(q,dq,t0,tf):
 # start of main code
 # call your functions here and take input from user 
 
-joints=input('please enter joints type: ')
-while(not re.match("^[r|p|R|P]*$", joints)):
-    print ("Error! Only letters r or p allowed!")
-    joints=input('please enter joints type: ')
-joints=joints.lower()
-dof=len(joints)
-
+joints,dof=setJoints()
 choice = input('type f for forward :')
 dhInput=[]
 if choice == 'f' :
-    #take input matrix 
-    for i in range(dof):          # A for loop for row entries
-        print('Variable for joint number ' + str(i+1))
-        for j in range(4):      # A for loop for column entries
-            print("please enter "+ variables[j])
-
-            inputData = float(input())
-            if variables[j] == "Alpha " or variables[j] == "Theta ":
-                inputData=(inputData/180.0)*np.pi
-
-            dhInput.append(inputData)
-            
+    dhInput=setDHParameter(dof)            
 else:
     #take input matrix 
     for i in range(dof):          # A for loop for row entries
@@ -434,12 +438,9 @@ DH=np.array(dhInput)
 DH=DH.reshape(dof,4)
 # choice = input('type f for forward :')
 if choice =='f':
-    list_A = list_A_matrix(DH)
-    # print (list_A)
-    list_TF = list_TF_matrix(list_A)
-    # print (list_TF)
+    list_TF,i,j,k=fK(DH)
+    print("x y z ",i,j,k)
     jacobian_matrix = getJacobian(list_TF)
-
     print (jacobian_matrix)
     
     
