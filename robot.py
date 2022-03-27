@@ -1,11 +1,18 @@
 import numpy as np
+from sympy import *
 import re
-
 #-------------------------------------------------------
 # global variables
 dof =0
 joints=''
 variables = ["a ", "Alpha ","d ","Theta "]
+A = symbols('A0:7')
+a = symbols('a0:7')
+alpha = symbols('alpha0:7')
+d = symbols('d0:7')
+theta = symbols('theta0:7')
+x, y, z = symbols("x y z")
+roll, pitch, yaw = symbols("roll pitch yaw")
 
 #RPP robot
 # list_A =[ [ [0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]] ,
@@ -139,9 +146,125 @@ def getJacobian():
 
 
 #-----------------------------------------------------
-#driver function to implement the inverse kienmatics
-def iK():
-    pass
+#driver functions to implement the inverse kienmatics
+def get_A_Symbolic (i):
+    
+    AnSymb = Matrix([
+        [cos(theta[i]), -sin(theta[i])*cos(alpha[i]), sin(theta[i])*sin(alpha[i]), a[i]*cos(theta[i])],
+        [sin(theta[i]), cos(theta[i])*cos(alpha[i]), -cos(theta[i])*sin(alpha[i]), a[i]*sin(theta[i]) ],
+        [0,sin(alpha[i]), cos(alpha[i]), d[i]],
+        [0, 0, 0, 1],
+    ])
+    
+    return AnSymb
+
+def get_T_Symbolic (dof, dhSymb):
+    
+    T_Matrix = get_A_Symbolic(1).subs([(a[1], dhSymb[0][0]), (alpha[1],dhSymb[0][1]),(d[1],dhSymb[0][2]), (theta[1], dhSymb[0][3])])
+    
+    for i in range (2, dof+1):
+        A = get_A_Symbolic(i).subs([(a[i],dhSymb[i-1][0]), (alpha[i],dhSymb[i-1][1]),(d[i],dhSymb[i-1][2]), (theta[i], dhSymb[i-1][3])])
+        T_Matrix = T_Matrix * A
+    
+    return T_Matrix
+
+def get_q_list (dof):
+    qList = []
+    for i in range(dof):
+        if joints[i] == 'r' or joints[i] == 'R':
+            qList.append(theta[i+1])
+        else:
+            qList.append(d[i+1])
+            
+    return qList
+
+def get_dh_symbolic (DH, joints):
+    dhSymb = DH.copy().tolist()
+    
+    for i in range(dof):
+
+        if joints[i] == 'r' or joints[i] == 'R':
+            dhSymb[i][3] = theta[i+1]
+        else:
+            dhSymb[i][2] = d[i+1]
+            
+    return dhSymb
+
+def ik(x=0, y=0, z=0, roll=None, pitch=None, yaw=None):
+    # Get the dh in symbolic form based on joints types
+    dhSymb = get_dh_symbolic(DH, joints)
+    print("Symbolic DH Matrix")
+    pprint(dhSymb)
+    print("--------------------------------\n\n")
+    
+    # Get the HTM in symbolic form and substitute with the constant dh values
+    TSymb = get_T_Symbolic(dof,dhSymb)
+    print("Symbolic HTM")
+    pprint(TSymb)
+    print("--------------------------------\n\n")
+    
+    # Get q variables list
+    q = get_q_list(dof)
+    
+    print("joint variables")
+    pprint(q)
+    print("--------------------------------\n\n")
+    
+    equations = []
+    eqList = []
+    
+    # roll >> phi >> about x
+    rollEq = atan(TSymb[1,0]/TSymb[0,0])
+    # pitch >> theta >> about y
+    pitchEq = atan(-TSymb[2,0]/sqrt((1-TSymb[2,0]**2)))
+    # yaw >> psi >> about z
+    yawEq = atan(TSymb[2,1]/TSymb[2,2])
+    
+    
+    # prevent AccumulationBounds problem
+    if TSymb[0,0] == 0:
+        rollEq = np.pi/2
+
+    if sqrt((1-TSymb[2,0]**2)) == 0:
+        pitchEq = np.pi/2
+
+    if TSymb[2,2] == 0 :
+        yawEq = np.pi/2
+    
+    
+    # Define equations, rearranged so expressions equal 0
+
+    # eq1 = T[0, 3] - x
+    eqList.append(TSymb[0, 3] - x)
+    # eq2 = T[1, 3] - y
+    eqList.append(TSymb[1, 3] - y)
+    # eq3 = T[2,3] - z
+    eqList.append(TSymb[2,3] - z)
+    
+    if(roll):
+        # eq4 = rollEq - roll
+        eqList.append(rollEq - roll)
+    if(pitch):
+        # eq5 = pitchEq - pitch
+        eqList.append(pitchEq - pitch)
+    if(yaw):
+        # eq6 = yawEq - yaw
+        eqList.append(yawEq - yaw)
+   
+    # remove equations that have no symbols
+    for eq in eqList:
+        if(type(eq) != float and eq != 0):
+            equations.append(eq)
+
+#     print("equations")
+#     pprint(equations)
+#     print("--------------------------------\n\n")
+    
+    
+    # Solve equations for q
+    solution = solve(equations, q)
+    print("Inverse Kinematics Solution")
+    pprint(solution)
 
 #------------------------------------------------------
 #driver function to implement the path planning 
@@ -159,16 +282,31 @@ while(not re.match("^[r|p|R|P]*$", joints)):
     joints=input('please enter joints type: ')
 
 dof=len(joints)
-a=[]
+dhInput=[]
 #take input matrix 
 for i in range(dof):          # A for loop for row entries
     print('Variable for joint number ' + str(i+1))
     for j in range(4):      # A for loop for column entries
         print("please enter "+ variables[j])
-        a.append(int(input()))
-DH=np.array(a)
+        
+        inputData = float(input())
+        if variables[j] == "Alpha " or variables[j] == "Theta ":
+            inputData=(inputData/180.0)*pi
+    
+        dhInput.append(inputData)
+        
+DH=np.array(dhInput)
 DH=DH.reshape(dof,4)
 list_A_matrix()
 list_TF_matrix()
+
+# dummy data to test inverse kinmatics
+# joints ='RR'
+# DH = [
+#     [2,0,0, 0.529],
+#     [2,0,0, 0.776],
+# ]
+# output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
+ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0)
 
 getJacobian()
