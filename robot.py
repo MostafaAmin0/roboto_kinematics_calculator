@@ -281,9 +281,9 @@ while(not re.match("^[r|p|R|P]*$", joints)):
 joints=joints.lower()
 dof=len(joints)
 
-choice = input('type f for forward')
+choice = input('type f for forward :')
+dhInput=[]
 if choice == 'f' :
-    dhInput=[]
     #take input matrix 
     for i in range(dof):          # A for loop for row entries
         print('Variable for joint number ' + str(i+1))
@@ -296,7 +296,6 @@ if choice == 'f' :
 
             dhInput.append(inputData)
 else :
-    dhInput=[]
     #take input matrix 
     for i in range(dof):          # A for loop for row entries
         print('Variable for joint number ' + str(i+1))
