@@ -1,6 +1,7 @@
 import numpy as np
 from sympy import *
 import re
+import matplotlib.pyplot as plt
 #-------------------------------------------------------
 # global variables
 dof =0
@@ -17,8 +18,8 @@ t = symbols("t")
 c = symbols('c0:4')
 t0 = 0
 tf = np.pi/8
-q=[]
-dq=[]
+# q=[]
+# dq=[]
 
 #RPP robot
 # list_A =[ [ [0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]] ,
@@ -106,9 +107,36 @@ def fK (DH):
     list_A = list_A_matrix(DH)
     # print (list_A)
     list_TF = list_TF_matrix(list_A)
-    tf_lenght=len(list_TF)-1    
+    tf_length=len(list_TF)-1
+    
+    xVal = list_TF[tf_length][0][3]
+    yVal = list_TF[tf_length][1][3]
+    zVal = list_TF[tf_length][2][3]
+    
+    # roll >> phi >> about x
+    # pitch >> theta >> about y
+    # yaw >> psi >> about z
+    
+    if list_TF[tf_length][0][0] == 0:
+        rollVal = np.pi/2
+    else:
+        rollVal = atan(list_TF[tf_length][1][0]/list_TF[tf_length][0][0])
+        
+    if sqrt((1-list_TF[tf_length][2][0]**2)) == 0:
+        pitchVal = np.pi/2
+        
+    else:
+        pitchVal = atan(-list_TF[tf_length][2][0]/sqrt((1-list_TF[tf_length][2][0]**2)))
+    
+
+    if list_TF[tf_length][2][2] == 0 :
+        yawVal = np.pi/2
+    else:
+        yawVal = atan(list_TF[tf_length][2][1]/list_TF[tf_length][2][2])
+    
+    
     # return list_TF,x,y,z
-    return list_TF , list_TF[2][0][3],list_TF[2][1][3],list_TF[2][2][3]
+    return list_TF, xVal, yVal, zVal, rollVal, pitchVal, yawVal
 
 #-----------------------------------------------------
 #driver function to implement jacobian matrix
@@ -360,7 +388,7 @@ def trajectoryJoints(time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
     qList = [ ikSolution[0][qSymbols[0]], ikSolution[0][qSymbols[1]] ]
     # [theta1 inital , theta2 initial] ,[ theta1 final , theta 2 final] >> from inveser kinematics
     #   q = [[-0.356,1.47655],[-0.3, 1.5]]
-    q.append(qList)
+#     q.append(qList)
     
     
     print(DH)
@@ -380,7 +408,9 @@ def trajectoryJoints(time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
     
     # call inverse jacobian 
     invJ = inv_jacobian(jacobian_matrix)
-    dq.append(get_joint_velocities(invJ, dxt,dyt))
+    dqList = get_joint_velocities(invJ, dxt,dyt)
+    
+    return qList, dqList
     
 
 def cubic_trajectory_planning(q,dq,t0,tf):
@@ -404,9 +434,83 @@ def cubic_trajectory_planning(q,dq,t0,tf):
         jointTrajectory = trajEq.subs([(c[0],solution[c[0]]), (c[1],solution[c[1]]), (c[2],solution[c[2]]), (c[3],solution[c[3]])])
 
         jointTrajectoryEqs.append(jointTrajectory)
-        print("solution")
-        pprint(solution)
+#         print("solution")
+#         pprint(solution)
     return jointTrajectoryEqs
+
+
+def plot_trajectory(jointsEquations, initalTime = 0, finalTime = 1, steps = 100):
+    
+    n = len(jointsEquations) # dof
+    
+    timesteps = np.linspace(initalTime, finalTime, num = steps)
+    
+    q = np.zeros((n, steps))
+    dq = np.zeros((n, steps))
+    ddq = np.zeros((n, steps))
+    
+    for i in range (n):
+
+        eq =  jointsEquations[i]
+        
+        for j in range(len(timesteps)):
+            
+            timestep = timesteps[j]
+
+            q[i, j] = eq.subs([(t, timestep)])
+            dq[i, j] = diff(eq).subs([(t, timestep)])
+            ddq[i, j] = diff(diff(eq)).subs([(t, timestep)])
+    
+        jointName = f"Joint {i + 1}"
+        
+        fig, axis = plt.subplots(3)
+        fig = plt.gcf()
+        fig.set_size_inches(16, 12)
+        fig.suptitle(jointName)
+
+        # Joint Position Plot
+        axis[0].set_title("Position")
+        axis[0].set(xlabel = "Time", ylabel = "Position")
+        axis[0].plot(timesteps, q[i])
+
+
+        axis[1].set_title("Velocity")
+        axis[1].set(xlabel = "Time", ylabel = "Velocity")
+        axis[1].plot(timesteps, dq[i])
+
+        # Joint Acceleration Plot
+        axis[2].set_title("Acceleration")
+        axis[2].set(xlabel = "Time", ylabel = "Acceleration")
+        axis[2].plot(timesteps, ddq[i])
+
+
+        fig.tight_layout()
+#         plt.show()
+
+        fig.savefig(f"trajectory plots/{jointName}.png", dpi=100, facecolor=('white'))
+
+def get_trajectory (initialTime , finalTime):
+    
+    q=[]
+    dq=[]
+    #input t0, tf
+    qList, dqList = trajectoryJoints(time=initialTime)
+    q.append(qList)
+    dq.append(dqList)
+    
+    qList, dqList = trajectoryJoints(time=finalTime)
+    q.append(qList)
+    dq.append(dqList)
+
+    print(q)
+    print(dq)
+        
+    jointsEquations = cubic_trajectory_planning(q,dq,initialTime,finalTime)
+    print(jointsEquations)
+    plot_trajectory(jointsEquations, initalTime = initialTime, finalTime = finalTime)
+    
+    
+    
 
 #-------------------------------------------------------
 # start of main code
@@ -438,8 +542,8 @@ DH=np.array(dhInput)
 DH=DH.reshape(dof,4)
 # choice = input('type f for forward :')
 if choice =='f':
-    list_TF,i,j,k=fK(DH)
-    print("x y z ",i,j,k)
+    list_TF,i,j,k, rollVal, pitchVal, yawVal=fK(DH)
+    print("x y z roll pitch yaw",i,j,k, rollVal, pitchVal, yawVal)
     jacobian_matrix = getJacobian(list_TF)
     print (jacobian_matrix)
     
@@ -469,15 +573,16 @@ elif choice == 'i':
 else:
 
 
-    #input t0, tf
-    trajectoryJoints(time=t0)
-    trajectoryJoints(time=tf)
+#     #input t0, tf
+#     trajectoryJoints(time=t0)
+#     trajectoryJoints(time=tf)
 
-    print(q)
-    print(dq)
+#     print(q)
+#     print(dq)
         
-    jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
-    print(jointsEquations)
+#     jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
+#     print(jointsEquations)
+    get_trajectory(initialTime = t0, finalTime = tf)
     
 # dummy data to test inverse kinmatics
 # joints ='RR'
