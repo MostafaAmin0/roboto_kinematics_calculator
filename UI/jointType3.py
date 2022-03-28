@@ -14,10 +14,10 @@ from dhWindow3 import Ui_dhWindow3
 
 class Ui_jointWindow3(object):
     def openWindow(self):
-        joint=self.textEdit.toPlainText()
-        if(joint!=''):
+        joints=self.textEdit.toPlainText()
+        if(joints!=''):
             self.window=QtWidgets.QMainWindow()
-            self.ui=Ui_dhWindow3(len(joint))
+            self.ui=Ui_dhWindow3(joints,len(joints))
             self.ui.setupUi(self.window)
             self.window.show()
 

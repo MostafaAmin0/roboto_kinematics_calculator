@@ -9,10 +9,19 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-# from choiceScreen import Ui_choiceScreen
 
+import sys
+sys.path.insert(0, '../')
+from robot import trajectoryJoints,cubic_trajectory_planning
 
 class Ui_pPPrint(object):
+    
+    def __init__ (self,joints,dhMatrix,to,tf):
+#         trajectoryJoints(dhMatrix, joints,t0)
+#         trajectoryJoints(dhMatrix, joints,tf)
+#         jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
+#         print(jointsEquations)
+    
     def backToStart(self):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()

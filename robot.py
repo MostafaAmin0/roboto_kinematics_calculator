@@ -362,7 +362,7 @@ def get_dh_modified(DH,joints,qList):
     return dhMod
 
 
-def trajectoryJoints(joints,time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
+def trajectoryJoints(DH,joints,time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
     
     dxEq = diff(xEq,t)
     dyEq = diff(yEq,t)
@@ -374,7 +374,7 @@ def trajectoryJoints(joints,time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t))
     dyt=dyEq.subs([(t,time)])
     
     ## call inverse function
-    ikSolution = ik(xt,yt)
+    ikSolution = ik(DH,joints,xt,yt)
     
     print(ikSolution)
     qSymbols = get_q_list(joints)
@@ -395,7 +395,7 @@ def trajectoryJoints(joints,time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t))
     # print (list_A)
     list_TF = list_TF_matrix(list_A)
     # print (list_TF)
-    jacobian_matrix = getJacobian(list_TF)
+    jacobian_matrix = getJacobian(joints,list_TF)
 
 
     
@@ -497,8 +497,8 @@ if __name__ == "__main__":
 
     else:
         #input t0, tf
-        trajectoryJoints(joints,time=t0)
-        trajectoryJoints(joints,time=tf)
+        trajectoryJoints(DH,joints,time=t0)
+        trajectoryJoints(DH,joints,time=tf)
 
         print(q)
         print(dq)

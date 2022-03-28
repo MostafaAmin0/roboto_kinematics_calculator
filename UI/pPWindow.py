@@ -11,15 +11,20 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pPPrint import Ui_pPPrint
 
+
 class Ui_MainWindow(object):
     to=''
     tf=''
+    
+    def __init__(self,joints,dhMatrix):
+        self.joints=joints
+        self.dhMatrix=dhMatrix
+    
     def openWindow(self):
         to=self.toField.toPlainText()
         tf=self.tfField.toPlainText()
-        print(to,tf)
         self.window=QtWidgets.QMainWindow()
-        self.ui=Ui_pPPrint()
+        self.ui=Ui_pPPrint(self.joints,self.dhMatrix,self.to,self.tf)
         self.ui.setupUi(self.window)
         self.window.show()
 
