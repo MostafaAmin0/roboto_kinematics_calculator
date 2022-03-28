@@ -11,16 +11,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from iKWindow2 import Ui_MainWindow
 
+import sys
+sys.path.insert(0, '../')
+from robot import setDHInverse
 
 class Ui_dhWindow2(object):
 
     dhMatrix=[]
-    def __init__(self,jointNumber):
+    def __init__(self,joints,jointNumber):
+        self.joints=joints
         self.jointNumber=jointNumber
 
     def openWindow(self):
+        self.dhMatrix=setDHInverse(self.dhMatrix)
         self.window=QtWidgets.QMainWindow()
-        self.ui=Ui_MainWindow()
+        self.ui=Ui_MainWindow(self.joints,self.dhMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
     
@@ -70,27 +75,37 @@ class Ui_dhWindow2(object):
             self.label.setFont(font)
             self.label.setObjectName("label")
             self.label.setText('For joint '+str(i+1))
+            
             self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
             self.textEdit.setGeometry(QtCore.QRect(190, 90+i*50, 31, 31))
             self.textEdit.setStyleSheet("background-color: rgb(255, 255, 255);")
             self.textEdit.setObjectName("textEdit")
+            dh.append(self.textEdit)
+            
             self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
             self.textEdit_2.setGeometry(QtCore.QRect(280, 90+i*50, 31, 31))
             self.textEdit_2.setStyleSheet("background-color: rgb(255, 255, 255);")
             self.textEdit_2.setObjectName("textEdit_2")
-            self.dTextField = QtWidgets.QTextEdit(self.centralwidget)
-            self.dTextField.setGeometry(QtCore.QRect(380, 90+i*50, 31, 31))
-            self.dTextField.setStyleSheet("background-color: rgb(255, 255, 255);")
-            self.dTextField.setObjectName("dTextField")
-            self.thetaTextField = QtWidgets.QTextEdit(self.centralwidget)
-            self.thetaTextField.setGeometry(QtCore.QRect(480, 90+i*50, 31, 31))
-            self.thetaTextField.setStyleSheet("background-color: rgb(255, 255, 255);")
-            self.thetaTextField.setObjectName("thetaTextField")
-
-            dh.append(self.textEdit)
             dh.append(self.textEdit_2)
-            dh.append(self.dTextField)
-            dh.append(self.thetaTextField)
+            
+            if self.joints[i] == 'P':
+                dh.append(0)
+            else:
+                self.dTextField = QtWidgets.QTextEdit(self.centralwidget)
+                self.dTextField.setGeometry(QtCore.QRect(380, 90+i*50, 31, 31))
+                self.dTextField.setStyleSheet("background-color: rgb(255, 255, 255);")
+                self.dTextField.setObjectName("dTextField")
+                dh.append(self.dTextField)
+            
+            if self.joints[i] == 'R':
+                dh.append(0)
+            else:   
+                self.thetaTextField = QtWidgets.QTextEdit(self.centralwidget)
+                self.thetaTextField.setGeometry(QtCore.QRect(480, 90+i*50, 31, 31))
+                self.thetaTextField.setStyleSheet("background-color: rgb(255, 255, 255);")
+                self.thetaTextField.setObjectName("thetaTextField")
+                dh.append(self.thetaTextField)
+            
             self.dhMatrix.append(dh)
 
         self.next_2 = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())

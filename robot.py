@@ -49,18 +49,6 @@ def setJoints ():
     
 
 # DH Parameter
-# def setDHParameter(dof):
-#     dhInput=[]
-#     for i in range(dof):          # A for loop for row entries
-#         print('Variable for joint number ' + str(i+1))
-#         for j in range(4):      # A for loop for column entries
-#             print("please enter "+ variables[j])
-#             inputData = float(input())
-#             if variables[j] == "Alpha " or variables[j] == "Theta ":
-#                 inputData=(inputData/180.0)*np.pi
-#             dhInput.append(inputData)
-#     return dhInput
-
 def setDHParameter(dh_matrix):
     dhInput=[]
     for i in range(len(dh_matrix)):          # A for loop for row entries
@@ -70,6 +58,23 @@ def setDHParameter(dh_matrix):
             inputData =float ( inputData.toPlainText())
             if j==1 or j==3 :
                 inputData=(inputData/180.0)*np.pi
+            dhRow.append(inputData)
+        dhInput.append(dhRow)
+    return dhInput
+
+# DH Parameter
+def setDHInverse(dh_matrix):
+    dhInput=[]
+    for i in range(len(dh_matrix)):          # A for loop for row entries
+        dhRow=[]
+        for j in range(4):      # A for loop for column entries
+            inputData=dh_matrix[i][j]
+            if j==1 or j==3 :
+                if type(inputData)!=int :
+                    inputData =float(inputData.toPlainText())
+                inputData=(inputData/180.0)*pi
+            else:
+                inputData =float ( inputData.toPlainText())
             dhRow.append(inputData)
         dhInput.append(dhRow)
     return dhInput
@@ -208,9 +213,9 @@ def get_T_Symbolic (dof, dhSymb):
     
     return T_Matrix
 
-def get_q_list (dof):
+def get_q_list (joints):
     qList = []
-    for i in range(dof):
+    for i in range(len(joints)):
         if joints[i] == 'r' or joints[i] == 'R':
             qList.append(theta[i+1])
         else:
@@ -219,9 +224,12 @@ def get_q_list (dof):
     return qList
 
 def get_dh_symbolic (DH, joints):
-    dhSymb = DH.copy().tolist()
-    
-    for i in range(dof):
+#     dhSymb = DH.copy().tolist()
+    dhSymb = DH.copy()
+    if type(dhSymb) != list:
+        dhSymb=dhSymb.tolist()
+        
+    for i in range(len(joints)):
         dhSymb[i][1] = (float(dhSymb[i][1])/180.0)*pi
         dhSymb[i][3] = (float(dhSymb[i][3])/180.0)*pi
 
@@ -232,7 +240,7 @@ def get_dh_symbolic (DH, joints):
             
     return dhSymb
 
-def ik(x=0, y=0, z=0, roll=None, pitch=None, yaw=None):
+def ik(DH,joints,x=0, y=0, z=0, roll=None, pitch=None, yaw=None):
     # Get the dh in symbolic form based on joints types
     dhSymb = get_dh_symbolic(DH, joints)
     print("Symbolic DH Matrix")
@@ -240,13 +248,14 @@ def ik(x=0, y=0, z=0, roll=None, pitch=None, yaw=None):
     print("--------------------------------\n\n")
     
     # Get the HTM in symbolic form and substitute with the constant dh values
+    dof=len(joints)
     TSymb = get_T_Symbolic(dof,dhSymb)
     print("Symbolic HTM")
     pprint(TSymb)
     print("--------------------------------\n\n")
     
     # Get q variables list
-    q = get_q_list(dof)
+    q = get_q_list(joints)
     
     print("joint variables")
     pprint(q)
@@ -341,7 +350,7 @@ def get_dh_modified(DH,joints,qList):
     dhMod = DH.copy()
     
 
-    for i in range(dof):
+    for i in range(len(joints)):
         dhMod[i][1] = (float(dhMod[i][1])/180.0)*np.pi
         dhMod[i][3] = (float(dhMod[i][3])/180.0)*np.pi
 
@@ -353,7 +362,7 @@ def get_dh_modified(DH,joints,qList):
     return dhMod
 
 
-def trajectoryJoints(time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
+def trajectoryJoints(joints,time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
     
     dxEq = diff(xEq,t)
     dyEq = diff(yEq,t)
@@ -368,7 +377,7 @@ def trajectoryJoints(time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
     ikSolution = ik(xt,yt)
     
     print(ikSolution)
-    qSymbols = get_q_list(dof)
+    qSymbols = get_q_list(joints)
     qList = [ ikSolution[0][qSymbols[0]], ikSolution[0][qSymbols[1]] ]
     # [theta1 inital , theta2 initial] ,[ theta1 final , theta 2 final] >> from inveser kinematics
     #   q = [[-0.356,1.47655],[-0.3, 1.5]]
@@ -429,7 +438,17 @@ if __name__ == "__main__":
     choice = input('type f for forward :')
     dhInput=[]
     if choice == 'f' :
-        dhInput=setDHParameter(dof)            
+        #take input matrix 
+        for i in range(dof):          # A for loop for row entries
+            print('Variable for joint number ' + str(i+1))
+            for j in range(4):      # A for loop for column entries
+                print("please enter "+ variables[j])
+
+                inputData = float(input())
+                if variables[j] == "Alpha " or variables[j] == "Theta ":
+                    inputData=(inputData/180.0)*np.pi
+
+                dhInput.append(inputData)            
     else:
         #take input matrix 
         for i in range(dof):          # A for loop for row entries
@@ -442,9 +461,6 @@ if __name__ == "__main__":
                 print("please enter "+ variables[j])
 
                 inputData = float(input())
-    #             if variables[j] == "Alpha " or variables[j] == "Theta ":
-    #                 inputData=(inputData/180.0)*pi
-
                 dhInput.append(inputData)
 
     DH=np.array(dhInput)
@@ -453,7 +469,7 @@ if __name__ == "__main__":
     if choice =='f':
         list_TF,i,j,k=fK(DH)
         print("x y z ",i,j,k)
-        jacobian_matrix = getJacobian(list_TF)
+        jacobian_matrix = getJacobian(joints,list_TF)
         print (jacobian_matrix)
 
 
@@ -473,18 +489,16 @@ if __name__ == "__main__":
             ikRoll = float(input('roll = '))
             ikPitch = float(input('pitch = '))
             ikYaw = float(input('yaw = '))
-            ik(x=ikx, y=iky, z=ikz, roll=ikRoll, pitch=ikPitch, yaw=ikYaw) # rpp
+            ik(DH,joints, x=ikx, y=iky, z=ikz, roll=ikRoll, pitch=ikPitch, yaw=ikYaw) # rpp
 
         else:
-            ik(x=ikx, y=iky, z=ikz) # rpp
+            ik(DH,joints, x=ikx, y=iky, z=ikz) # rpp
 
 
     else:
-
-
         #input t0, tf
-        trajectoryJoints(time=t0)
-        trajectoryJoints(time=tf)
+        trajectoryJoints(joints,time=t0)
+        trajectoryJoints(joints,time=tf)
 
         print(q)
         print(dq)

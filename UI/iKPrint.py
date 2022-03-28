@@ -9,9 +9,24 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-# from choiceScreen import Ui_choiceScreen
+import sys
+sys.path.insert(0, '../')
+from robot import ik
 
 class Ui_ikPrint(object):
+    def __init__(self,joints,dhMatrix,poseMatrix):
+        ikx=poseMatrix[0]
+        ikx=ikx.toPlainText()
+        iky=poseMatrix[1]
+        iky=iky.toPlainText()
+        ikz=poseMatrix[2]
+        ikz=ikz.toPlainText()
+        ikRoll=poseMatrix[3]
+        ikPitch=poseMatrix[4]
+        ikYaw=poseMatrix[5]
+        self.solution = ik(dhMatrix,joints, x=float(ikx), y=float(iky), z=float (ikz))
+#         self.solution = ik(dhMatrix,joints, x=ikx.toPlainText(), y=iky.toPlainText(), z=ikz.toPlainText(),roll=ikRoll.toPlainText(), pitch=ikPitch.toPlainText(), yaw=ikYaw.toPlainText())
+        print(self.solution)
     def backToStart(self):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()

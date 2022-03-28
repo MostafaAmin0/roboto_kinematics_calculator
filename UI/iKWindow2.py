@@ -12,17 +12,22 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from iKPrint import Ui_ikPrint
 
 class Ui_MainWindow(object):
-    matrix=[]
+    poseMatrix=[]
+        
+    def __init__(self,joints,dhMatrix):
+        self.joints=joints
+        self.dhMatrix=dhMatrix
+    
     def openWindow(self):
-        self.matrix.append(self.field1.toPlainText())
-        self.matrix.append(self.field2.toPlainText())
-        self.matrix.append(self.field3.toPlainText())
-        self.matrix.append(self.field4.toPlainText())
-        self.matrix.append(self.field5.toPlainText())
-        self.matrix.append(self.field6.toPlainText())
+        self.poseMatrix.append(self.field1)
+        self.poseMatrix.append(self.field2)
+        self.poseMatrix.append(self.field3)
+        self.poseMatrix.append(self.field4)
+        self.poseMatrix.append(self.field5)
+        self.poseMatrix.append(self.field6)
 
         self.window=QtWidgets.QMainWindow()
-        self.ui=Ui_ikPrint()
+        self.ui=Ui_ikPrint(self.joints,self.dhMatrix,self.poseMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
 
@@ -167,7 +172,7 @@ class Ui_MainWindow(object):
         self.aTextField.setText(_translate("MainWindow", "X"))
         self.aTextField_2.setText(_translate("MainWindow", "Y"))
         self.aTextField_3.setText(_translate("MainWindow", "Z"))
-        self.label.setText(_translate("MainWindow", "For joint "))
+        self.label.setText(_translate("MainWindow", "End Effector"))
         self.label_2.setText(_translate("MainWindow", "Optional"))
         self.aTextField_4.setText(_translate("MainWindow", "Roll"))
         self.aTextField_6.setText(_translate("MainWindow", "Yaw"))
