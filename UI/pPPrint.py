@@ -12,16 +12,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import sys
 sys.path.insert(0, '../')
-from robot import trajectoryJoints,cubic_trajectory_planning
+from robot import get_trajectory
 
 class Ui_pPPrint(object):
     
     def __init__ (self,joints,dhMatrix,to,tf):
-        self.joints=joints
-#         trajectoryJoints(dhMatrix, joints,t0)
-#         trajectoryJoints(dhMatrix, joints,tf)
-#         jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
-#         print(jointsEquations)
+        to=to.toPlainText()
+        to=float(to)
+        tf=tf.toPlainText()
+        tf=float(tf)
+        jointsEquations=get_trajectory(dhMatrix,joints,initialTime = to, finalTime = tf)
+        print(jointsEquations)
         
     def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
