@@ -21,7 +21,7 @@ class Ui_MainWindow(object):
         self.joints=joints
         self.jointNumber=jointNumber
 
-    def openWindow(self):
+    def openWindow(self,mainWindow):
 #         for i in range(self.jointNumber):
 #             for j in  range(4):
 #                 print(self.dhMatrix[i][j].toPlainText())
@@ -31,6 +31,7 @@ class Ui_MainWindow(object):
         self.ui=Ui_fkandJWindow(self.joints,self.dhMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(580, 504)
@@ -101,7 +102,7 @@ class Ui_MainWindow(object):
             dh.append(self.thetaTextField)
             self.dhMatrix.append(dh)
 
-        self.next_2 = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
+        self.next_2 = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow(MainWindow))
         self.next_2.setGeometry(QtCore.QRect(470, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
