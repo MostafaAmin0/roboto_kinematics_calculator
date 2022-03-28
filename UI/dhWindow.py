@@ -11,18 +11,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fKandJ import Ui_fkandJWindow
 
+import sys
+sys.path.insert(0, '../')
+from robot import setDHParameter
 
 class Ui_MainWindow(object):
     dhMatrix=[]
-    def __init__(self,jointNumber):
+    def __init__(self,joints,jointNumber):
+        self.joints=joints
         self.jointNumber=jointNumber
 
     def openWindow(self):
-        for i in range(self.jointNumber):
-            for j in  range(4):
-                print(self.dhMatrix[i][j].toPlainText())
+#         for i in range(self.jointNumber):
+#             for j in  range(4):
+#                 print(self.dhMatrix[i][j].toPlainText())
+        self.dhMatrix=setDHParameter(self.dhMatrix)
+        
         self.window=QtWidgets.QMainWindow()
-        self.ui=Ui_fkandJWindow()
+        self.ui=Ui_fkandJWindow(self.joints,self.dhMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
     def setupUi(self, MainWindow):

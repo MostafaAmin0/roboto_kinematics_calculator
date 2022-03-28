@@ -3,7 +3,7 @@ from sympy import *
 import re
 #-------------------------------------------------------
 # global variables
-dof =0
+# dof =0
 joints=''
 variables = ["a ", "Alpha ","d ","Theta "]
 A = symbols('A0:7')
@@ -49,16 +49,29 @@ def setJoints ():
     
 
 # DH Parameter
-def setDHParameter(dof):
+# def setDHParameter(dof):
+#     dhInput=[]
+#     for i in range(dof):          # A for loop for row entries
+#         print('Variable for joint number ' + str(i+1))
+#         for j in range(4):      # A for loop for column entries
+#             print("please enter "+ variables[j])
+#             inputData = float(input())
+#             if variables[j] == "Alpha " or variables[j] == "Theta ":
+#                 inputData=(inputData/180.0)*np.pi
+#             dhInput.append(inputData)
+#     return dhInput
+
+def setDHParameter(dh_matrix):
     dhInput=[]
-    for i in range(dof):          # A for loop for row entries
-        print('Variable for joint number ' + str(i+1))
+    for i in range(len(dh_matrix)):          # A for loop for row entries
+        dhRow=[]
         for j in range(4):      # A for loop for column entries
-            print("please enter "+ variables[j])
-            inputData = float(input())
-            if variables[j] == "Alpha " or variables[j] == "Theta ":
+            inputData=dh_matrix[i][j]
+            inputData =float ( inputData.toPlainText())
+            if j==1 or j==3 :
                 inputData=(inputData/180.0)*np.pi
-            dhInput.append(inputData)
+            dhRow.append(inputData)
+        dhInput.append(dhRow)
     return dhInput
 
 #------------------------------------------------------
@@ -77,7 +90,7 @@ def An_matrix(a,alpha,d,theta):
 def list_A_matrix(DH):
     
     list_A = []
-    for i in range(dof):
+    for i in range(len(DH)):
         mat=np.around(An_matrix(DH[i][0],DH[i][1],DH[i][2],DH[i][3]),1)
         mat+=0.
         list_A.append(mat.tolist())
@@ -94,7 +107,7 @@ def list_TF_matrix(list_A):
     list_TF=[]
     tf1 = list_A[0]
     list_TF.append(tf1)
-    for i in range (0,dof-1):
+    for i in range (0,len(list_A)-1):
         tf=np.dot( list_TF[i] , list_A[i+1] )
         list_TF.append(tf.tolist())
     return list_TF
@@ -104,17 +117,16 @@ def list_TF_matrix(list_A):
 
 def fK (DH):
     list_A = list_A_matrix(DH)
-    # print (list_A)
     list_TF = list_TF_matrix(list_A)
-    tf_lenght=len(list_TF)-1    
+    tf_length=len(list_TF)-1    
     # return list_TF,x,y,z
-    return list_TF , list_TF[2][0][3],list_TF[2][1][3],list_TF[2][2][3]
+    return list_TF , list_TF[tf_length][0][3],list_TF[tf_length][1][3],list_TF[tf_length][2][3]
 
 #-----------------------------------------------------
 #driver function to implement jacobian matrix
 
-def getJacobian(list_TF):
-    
+def getJacobian(joints,list_TF):
+    dof=len(list_TF)
     jacobian_matrix = []
     #get O0--->On
     #get z0-->Zn-1
@@ -412,79 +424,80 @@ def cubic_trajectory_planning(q,dq,t0,tf):
 # start of main code
 # call your functions here and take input from user 
 
-joints,dof=setJoints()
-choice = input('type f for forward :')
-dhInput=[]
-if choice == 'f' :
-    dhInput=setDHParameter(dof)            
-else:
-    #take input matrix 
-    for i in range(dof):          # A for loop for row entries
-        print('Variable for joint number ' + str(i+1))
-        for j in range(4):      # A for loop for column entries
-            if (joints[i] == 'r' and j==3 ) or (joints[i] == 'p' and j==2 ):
-                dhInput.append(0)
-                continue
-                
-            print("please enter "+ variables[j])
-
-            inputData = float(input())
-#             if variables[j] == "Alpha " or variables[j] == "Theta ":
-#                 inputData=(inputData/180.0)*pi
-
-            dhInput.append(inputData)
-        
-DH=np.array(dhInput)
-DH=DH.reshape(dof,4)
-# choice = input('type f for forward :')
-if choice =='f':
-    list_TF,i,j,k=fK(DH)
-    print("x y z ",i,j,k)
-    jacobian_matrix = getJacobian(list_TF)
-    print (jacobian_matrix)
-    
-    
-elif choice == 'i':
-    # output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
-#     ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0) rr
-
-    
-    print('please enter end effector pose : ')
-    ikx = float(input('x = '))
-    iky = float(input('y = '))
-    ikz = float(input('z = '))
-    rpy = input('do you want to enter RPY? y/n ')
-    
-    
-    if rpy == 'y':
-        ikRoll = float(input('roll = '))
-        ikPitch = float(input('pitch = '))
-        ikYaw = float(input('yaw = '))
-        ik(x=ikx, y=iky, z=ikz, roll=ikRoll, pitch=ikPitch, yaw=ikYaw) # rpp
-        
+if __name__ == "__main__":
+    joints,dof=setJoints()
+    choice = input('type f for forward :')
+    dhInput=[]
+    if choice == 'f' :
+        dhInput=setDHParameter(dof)            
     else:
-        ik(x=ikx, y=iky, z=ikz) # rpp
+        #take input matrix 
+        for i in range(dof):          # A for loop for row entries
+            print('Variable for joint number ' + str(i+1))
+            for j in range(4):      # A for loop for column entries
+                if (joints[i] == 'r' and j==3 ) or (joints[i] == 'p' and j==2 ):
+                    dhInput.append(0)
+                    continue
 
-        
-else:
+                print("please enter "+ variables[j])
+
+                inputData = float(input())
+    #             if variables[j] == "Alpha " or variables[j] == "Theta ":
+    #                 inputData=(inputData/180.0)*pi
+
+                dhInput.append(inputData)
+
+    DH=np.array(dhInput)
+    DH=DH.reshape(dof,4)
+    # choice = input('type f for forward :')
+    if choice =='f':
+        list_TF,i,j,k=fK(DH)
+        print("x y z ",i,j,k)
+        jacobian_matrix = getJacobian(list_TF)
+        print (jacobian_matrix)
 
 
-    #input t0, tf
-    trajectoryJoints(time=t0)
-    trajectoryJoints(time=tf)
+    elif choice == 'i':
+        # output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
+    #     ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0) rr
 
-    print(q)
-    print(dq)
-        
-    jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
-    print(jointsEquations)
-    
-# dummy data to test inverse kinmatics
-# joints ='RR'
-# DH = [
-#     [2,0,0, 0.529],
-#     [2,0,0, 0.776],
-# ]
+
+        print('please enter end effector pose : ')
+        ikx = float(input('x = '))
+        iky = float(input('y = '))
+        ikz = float(input('z = '))
+        rpy = input('do you want to enter RPY? y/n ')
+
+
+        if rpy == 'y':
+            ikRoll = float(input('roll = '))
+            ikPitch = float(input('pitch = '))
+            ikYaw = float(input('yaw = '))
+            ik(x=ikx, y=iky, z=ikz, roll=ikRoll, pitch=ikPitch, yaw=ikYaw) # rpp
+
+        else:
+            ik(x=ikx, y=iky, z=ikz) # rpp
+
+
+    else:
+
+
+        #input t0, tf
+        trajectoryJoints(time=t0)
+        trajectoryJoints(time=tf)
+
+        print(q)
+        print(dq)
+
+        jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
+        print(jointsEquations)
+
+    # dummy data to test inverse kinmatics
+    # joints ='RR'
+    # DH = [
+    #     [2,0,0, 0.529],
+    #     [2,0,0, 0.776],
+    # ]
 
 
 

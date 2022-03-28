@@ -9,9 +9,18 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-# from choiceScreen import Ui_choiceScreen
+
+import sys
+sys.path.insert(0, '../')
+from robot import fK,getJacobian
 
 class Ui_fkandJWindow(object):
+    
+    def __init__(self,joints,dhMatrix):
+        self.list_TF,self.x,self.y,self.z= fK(dhMatrix)
+        print(self.list_TF,self.x,self.y,self.z)
+        self.jacobian_matrix=getJacobian(joints,self.list_TF)
+        print(self.jacobian_matrix)
 
     def backToStart(self):
         self.window=QtWidgets.QMainWindow()
