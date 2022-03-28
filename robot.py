@@ -13,34 +13,53 @@ d = symbols('d0:7')
 theta = symbols('theta0:7')
 x, y, z = symbols("x y z")
 roll, pitch, yaw = symbols("roll pitch yaw")
+t = symbols("t")
+c = symbols('c0:4')
+t0 = 0
+tf = np.pi/8
+q=[]
+dq=[]
 
 #RPP robot
 # list_A =[ [ [0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]] ,
 #           [ [1,0,0,0],[0,0,1,0],[0,-1,0,2],[0,0,0,1]] ,
 #           [ [1,0,0,0],[0,1,0,0],[0,0,1,4],[0,0,0,1]] ]
 
-list_A = []
-
-
 
 # list_TF=[
 #          [[0,-1,0,0],[1,0,0,0],[0,0,1,1],[0,0,0,1]],
 #          [[0,0,-1,0],[1,0,0,0],[0,-1,0,3],[0,0,0,1]],
 #          [[0,0,-1,-4],[1,0,0,0],[0,-1,0,3],[0,0,0,1]] ] 
-list_TF=[]
 
-jacobian_matrix=[]
+
 
 #--------------------------------------------------------
 #set the manipulator configurations
 
 #DOF & type of joints
 def setJoints ():
-    pass
+    joints=input('please enter joints type: ')
+    while(not re.match("^[r|p|R|P]*$", joints)):
+        print ("Error! Only letters r or p allowed!")
+        joints=input('please enter joints type: ')
+    joints=joints.lower()
+    dof=len(joints)
+    return joints ,dof
+
+    
 
 # DH Parameter
-def setDHParameter():
-    pass
+def setDHParameter(dof):
+    dhInput=[]
+    for i in range(dof):          # A for loop for row entries
+        print('Variable for joint number ' + str(i+1))
+        for j in range(4):      # A for loop for column entries
+            print("please enter "+ variables[j])
+            inputData = float(input())
+            if variables[j] == "Alpha " or variables[j] == "Theta ":
+                inputData=(inputData/180.0)*np.pi
+            dhInput.append(inputData)
+    return dhInput
 
 #------------------------------------------------------
 #helper functions to return the A matrices
@@ -55,38 +74,48 @@ def An_matrix(a,alpha,d,theta):
     return An
     
 # A1----An
-def list_A_matrix():
+def list_A_matrix(DH):
+    
+    list_A = []
     for i in range(dof):
         mat=np.around(An_matrix(DH[i][0],DH[i][1],DH[i][2],DH[i][3]),1)
         mat+=0.
         list_A.append(mat.tolist())
-    print(list_A)
+        
+    return list_A
 
             
 #------------------------------------------------------
 #helper function to return the Transformatiom matrices
 
 # T1----Tn
-def list_TF_matrix():
+def list_TF_matrix(list_A):
     
+    list_TF=[]
     tf1 = list_A[0]
     list_TF.append(tf1)
     for i in range (0,dof-1):
         tf=np.dot( list_TF[i] , list_A[i+1] )
         list_TF.append(tf.tolist())
-    print(list_TF)
+    return list_TF
 
 #-----------------------------------------------------
 #driver function to implement the forward kienmatics
 
-def fK ():
-    pass
+def fK (DH):
+    list_A = list_A_matrix(DH)
+    # print (list_A)
+    list_TF = list_TF_matrix(list_A)
+    tf_lenght=len(list_TF)-1    
+    # return list_TF,x,y,z
+    return list_TF , list_TF[2][0][3],list_TF[2][1][3],list_TF[2][2][3]
 
 #-----------------------------------------------------
 #driver function to implement jacobian matrix
 
-def getJacobian():
+def getJacobian(list_TF):
     
+    jacobian_matrix = []
     #get O0--->On
     #get z0-->Zn-1
     list_O = []
@@ -139,7 +168,8 @@ def getJacobian():
 #     print(list_jw)
     
     jacobian_matrix=np.concatenate((list_jv,list_jw),axis=0)
-    print(jacobian_matrix)
+    
+    return jacobian_matrix
         
 
 
@@ -180,6 +210,8 @@ def get_dh_symbolic (DH, joints):
     dhSymb = DH.copy().tolist()
     
     for i in range(dof):
+        dhSymb[i][1] = (float(dhSymb[i][1])/180.0)*pi
+        dhSymb[i][3] = (float(dhSymb[i][3])/180.0)*pi
 
         if joints[i] == 'r' or joints[i] == 'R':
             dhSymb[i][3] = theta[i+1]
@@ -260,42 +292,132 @@ def ik(x=0, y=0, z=0, roll=None, pitch=None, yaw=None):
     
     
     # Solve equations for q
-    solution = solve(equations, q)
+    solution = solve(equations, q, dict=True)
     print("Inverse Kinematics Solution")
     pprint(solution)
+    return solution
 
 #------------------------------------------------------
-#driver function to implement the path planning 
 
-def path_planning():
-    pass
+#driver functions to implement the path planning 
+
+def inv_jacobian(jacobian):
+    jacobianTrans=np.transpose(jacobian)
+    jacobianTrans+=0.
+    temp = np.dot(jacobianTrans,jacobian)
+    temp=np.transpose(temp)
+    temp=np.around(temp,1)
+
+    jacobianInv=np.dot(temp,jacobianTrans)
+    jacobianInv=np.around(jacobianInv,1)
+    
+
+    return jacobianInv
+
+
+def get_joint_velocities(inv_jacobian, dx,dy):
+    
+    meu = np.array([[dx],[dy],[0],[0],[0],[0]])
+    dq = np.dot(inv_jacobian,meu)
+
+    dq = dq*np.pi/180
+    
+    return dq.flatten().tolist()
+
+    
+def get_dh_modified(DH,joints,qList):
+    dhMod = DH.copy()
+    
+
+    for i in range(dof):
+        dhMod[i][1] = (float(dhMod[i][1])/180.0)*np.pi
+        dhMod[i][3] = (float(dhMod[i][3])/180.0)*np.pi
+
+        if joints[i] == 'r' or joints[i] == 'R':
+            dhMod[i][3] = qList[i]
+        else:
+            dhMod[i][2] = qList[i]
+            
+    return dhMod
+
+
+def trajectoryJoints(time=0, xEq=2 + (1/2)*cos(t) , yEq=1 + (1/2)*sin(t)):
+    
+    dxEq = diff(xEq,t)
+    dyEq = diff(yEq,t)
+    
+    xt=xEq.subs([(t,time)])
+    yt=yEq.subs([(t,time)])
+    
+    dxt=dxEq.subs([(t,time)])
+    dyt=dyEq.subs([(t,time)])
+    
+    ## call inverse function
+    ikSolution = ik(xt,yt)
+    
+    print(ikSolution)
+    qSymbols = get_q_list(dof)
+    qList = [ ikSolution[0][qSymbols[0]], ikSolution[0][qSymbols[1]] ]
+    # [theta1 inital , theta2 initial] ,[ theta1 final , theta 2 final] >> from inveser kinematics
+    #   q = [[-0.356,1.47655],[-0.3, 1.5]]
+    q.append(qList)
+    
+    
+    print(DH)
+    #call function for modified DH param 
+    dhMod = get_dh_modified(DH, joints, qList)
+    print(dhMod)
+        
+    
+    # call jacobian 
+    list_A = list_A_matrix(dhMod)
+    # print (list_A)
+    list_TF = list_TF_matrix(list_A)
+    # print (list_TF)
+    jacobian_matrix = getJacobian(list_TF)
+
+
+    
+    # call inverse jacobian 
+    invJ = inv_jacobian(jacobian_matrix)
+    dq.append(get_joint_velocities(invJ, dxt,dyt))
+    
+
+def cubic_trajectory_planning(q,dq,t0,tf):
+    
+    trajEq = c[0] + c[1]*t + c[2] * t**2 + c[3] * t**3
+    diffTrajEq = diff(trajEq,t)
+    jointTrajectoryEqs = []
+    
+    for i in range(len(q)):
+        
+        jointsEq = []
+
+        jointsEq.append(trajEq.subs([(t,t0)])-q[0][i])
+        jointsEq.append(diffTrajEq.subs([(t,t0)])-dq[0][i])
+        jointsEq.append(trajEq.subs([(t,tf)])-q[1][i])
+        jointsEq.append(diffTrajEq.subs([(t,tf)])-dq[1][i])
+
+        # Solve equations for q
+        solution = solve(jointsEq, [c[0],c[1],c[2],c[3]])
+        
+        jointTrajectory = trajEq.subs([(c[0],solution[c[0]]), (c[1],solution[c[1]]), (c[2],solution[c[2]]), (c[3],solution[c[3]])])
+
+        jointTrajectoryEqs.append(jointTrajectory)
+        print("solution")
+        pprint(solution)
+    return jointTrajectoryEqs
 
 #-------------------------------------------------------
 # start of main code
 # call your functions here and take input from user 
 
-joints=input('please enter joints type: ')
-while(not re.match("^[r|p|R|P]*$", joints)):
-    print ("Error! Only letters r or p allowed!")
-    joints=input('please enter joints type: ')
-joints=joints.lower()
-dof=len(joints)
-
+joints,dof=setJoints()
 choice = input('type f for forward :')
 dhInput=[]
 if choice == 'f' :
-    #take input matrix 
-    for i in range(dof):          # A for loop for row entries
-        print('Variable for joint number ' + str(i+1))
-        for j in range(4):      # A for loop for column entries
-            print("please enter "+ variables[j])
-
-            inputData = float(input())
-            if variables[j] == "Alpha " or variables[j] == "Theta ":
-                inputData=(inputData/180.0)*np.pi
-
-            dhInput.append(inputData)
-else :
+    dhInput=setDHParameter(dof)            
+else:
     #take input matrix 
     for i in range(dof):          # A for loop for row entries
         print('Variable for joint number ' + str(i+1))
@@ -307,22 +429,56 @@ else :
             print("please enter "+ variables[j])
 
             inputData = float(input())
-            if variables[j] == "Alpha " or variables[j] == "Theta ":
-                inputData=(inputData/180.0)*pi
+#             if variables[j] == "Alpha " or variables[j] == "Theta ":
+#                 inputData=(inputData/180.0)*pi
 
             dhInput.append(inputData)
         
 DH=np.array(dhInput)
 DH=DH.reshape(dof,4)
-
+# choice = input('type f for forward :')
 if choice =='f':
-    list_A_matrix()
-    list_TF_matrix()
-    getJacobian()
-else :
+    list_TF,i,j,k=fK(DH)
+    print("x y z ",i,j,k)
+    jacobian_matrix = getJacobian(list_TF)
+    print (jacobian_matrix)
+    
+    
+elif choice == 'i':
     # output :{θ₁: 0.529243889346318, θ₂: 0.776654323826081}
-    ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0)
+#     ik(x=2.25, y=2.94, z=0, roll=1.3058982131724, pitch=0, yaw=0) rr
 
+    
+    print('please enter end effector pose : ')
+    ikx = float(input('x = '))
+    iky = float(input('y = '))
+    ikz = float(input('z = '))
+    rpy = input('do you want to enter RPY? y/n ')
+    
+    
+    if rpy == 'y':
+        ikRoll = float(input('roll = '))
+        ikPitch = float(input('pitch = '))
+        ikYaw = float(input('yaw = '))
+        ik(x=ikx, y=iky, z=ikz, roll=ikRoll, pitch=ikPitch, yaw=ikYaw) # rpp
+        
+    else:
+        ik(x=ikx, y=iky, z=ikz) # rpp
+
+        
+else:
+
+
+    #input t0, tf
+    trajectoryJoints(time=t0)
+    trajectoryJoints(time=tf)
+
+    print(q)
+    print(dq)
+        
+    jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
+    print(jointsEquations)
+    
 # dummy data to test inverse kinmatics
 # joints ='RR'
 # DH = [
