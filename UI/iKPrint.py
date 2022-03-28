@@ -11,10 +11,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 sys.path.insert(0, '../')
-from robot import ik
+from robot import ik, get_q_list
+
 
 class Ui_ikPrint(object):
     def __init__(self,joints,dhMatrix,poseMatrix):
+        self.joints=joints
+        
         ikx=poseMatrix[0]
         ikx=ikx.toPlainText()
         iky=poseMatrix[1]
@@ -26,7 +29,11 @@ class Ui_ikPrint(object):
         ikYaw=poseMatrix[5]
         self.solution = ik(dhMatrix,joints, x=float(ikx), y=float(iky), z=float (ikz))
 #         self.solution = ik(dhMatrix,joints, x=ikx.toPlainText(), y=iky.toPlainText(), z=ikz.toPlainText(),roll=ikRoll.toPlainText(), pitch=ikPitch.toPlainText(), yaw=ikYaw.toPlainText())
+        self.q_list=get_q_list(joints)
+    
         print(self.solution)
+        print(self.solution[0][self.q_list[0]])
+        print(self.solution[0][self.q_list[1]])
     def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()
@@ -47,6 +54,34 @@ class Ui_ikPrint(object):
         self.back.setFont(font)
         self.back.setStyleSheet("background-color: rgb(222, 201, 254);")
         self.back.setObjectName("back")
+        
+        #TODO print
+        
+        self.printText = QtWidgets.QLabel(self.centralwidget)
+        self.printText.setGeometry(QtCore.QRect(20, 0, 371, 91))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.printText.setFont(font)
+        self.printText.setObjectName("printText")
+
+        self.Label = QtWidgets.QLabel(self.centralwidget)
+        self.Label.setGeometry(QtCore.QRect(90, 110, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(20)
+        self.Label.setFont(font)
+        self.Label.setObjectName("Label")  
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(70, 110, 440, 250))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(20)
+        self.textEdit.setFont(font)
+        self.textEdit.setText(str(self.solution))
+        self.textEdit.setObjectName("textEdit")
+
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 599, 21))
@@ -63,6 +98,8 @@ class Ui_ikPrint(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.back.setText(_translate("MainWindow", "Back"))
+        self.printText.setText(_translate("MainWindow", "The joint variables are"))
+        
 
 
 if __name__ == "__main__":
