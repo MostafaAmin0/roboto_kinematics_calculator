@@ -55,7 +55,7 @@ class Ui_ikPrint(object):
         self.back.setStyleSheet("background-color: rgb(222, 201, 254);")
         self.back.setObjectName("back")
         
-        #TODO print
+        #print
         
         self.printText = QtWidgets.QLabel(self.centralwidget)
         self.printText.setGeometry(QtCore.QRect(20, 0, 371, 91))
@@ -97,7 +97,7 @@ class Ui_ikPrint(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
-        self.back.setText(_translate("MainWindow", "Back"))
+        self.back.setText(_translate("MainWindow", "Exit"))
         self.printText.setText(_translate("MainWindow", "The joint variables are"))
         
 

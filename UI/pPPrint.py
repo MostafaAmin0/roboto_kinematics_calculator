@@ -21,8 +21,8 @@ class Ui_pPPrint(object):
         to=float(to)
         tf=tf.toPlainText()
         tf=float(tf)
-        jointsEquations=get_trajectory(dhMatrix,joints,initialTime = to, finalTime = tf)
-        print(jointsEquations)
+        self.jointsEquations=get_trajectory(dhMatrix,joints,initialTime = to, finalTime = tf)
+        print(self.jointsEquations)
         
     def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
@@ -43,6 +43,23 @@ class Ui_pPPrint(object):
         self.back.setFont(font)
         self.back.setStyleSheet("background-color: rgb(222, 201, 254);")
         self.back.setObjectName("back")
+        #print
+        self.printText = QtWidgets.QLabel(self.centralwidget)
+        self.printText.setGeometry(QtCore.QRect(20, 0, 371, 91))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.printText.setFont(font)
+        self.printText.setObjectName("printText")
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.textEdit.setFont(font)
+        self.textEdit.setGeometry(QtCore.QRect(40, 100, 521, 231))
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit.setText(str(self.jointsEquations))
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 617, 21))
@@ -58,7 +75,8 @@ class Ui_pPPrint(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
-        self.back.setText(_translate("MainWindow", "Back"))
+        self.back.setText(_translate("MainWindow", "Exit"))
+        self.printText.setText(_translate("MainWindow", "Joint Trajectories"))
 
 
 if __name__ == "__main__":

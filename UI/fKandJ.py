@@ -18,7 +18,7 @@ from robot import fK,getJacobian
 class Ui_fkandJWindow(object):
     
     def __init__(self,joints,dhMatrix):
-        self.list_TF,self.x,self.y,self.z= fK(dhMatrix)
+        self.list_TF,self.x,self.y,self.z,self.roll,self.pitch,self.yaw= fK(dhMatrix)
         print(self.list_TF,self.x,self.y,self.z)
         self.joints=joints
         self.jacobian_matrix=getJacobian(joints,self.list_TF)
@@ -121,12 +121,13 @@ class Ui_fkandJWindow(object):
         self.printText_2.setGeometry(QtCore.QRect(10, 150, 371, 91))
         
         # Print 
-        self.textEdit.setText(str(self.x))
-        self.textEdit_2.setText(str(self.y))
-        self.textEdit_3.setText(str(self.z)) 
-        # self.textEdit.setText(str(self.Roll))
-        # self.textEdit.setText(str(self.x))
-        # self.textEdit.setText(str(self.x))
+        self.textEdit.setText(str(round(self.x,1)))
+        self.textEdit_2.setText(str(round(self.y,1)))
+        self.textEdit_3.setText(str(round(self.z,1))) 
+        self.textEdit_4.setText(str(round(self.roll,1)))
+        self.textEdit_5.setText(str(round(self.pitch,1)))
+        self.textEdit_6.setText(str(round(self.yaw,1)))
+        
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(16)
@@ -157,7 +158,7 @@ class Ui_fkandJWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
-        self.back.setText(_translate("MainWindow", "Back"))
+        self.back.setText(_translate("MainWindow", "Exit"))
         self.printText.setText(_translate("MainWindow", "The End Effector Pose is"))
         self.xLabel.setText(_translate("MainWindow", "X"))
         self.yLabel.setText(_translate("MainWindow", "Y"))

@@ -29,7 +29,7 @@ class Ui_choiceScreen(object):
 
     def setupUi(self, Window2):
         Window2.setObjectName("Window2")
-        Window2.resize(1000,800)
+        Window2.resize(580, 504)
         font = QtGui.QFont()
         font.setFamily("MS PGothic")
         Window2.setFont(font)
