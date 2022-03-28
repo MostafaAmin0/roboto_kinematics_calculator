@@ -17,11 +17,12 @@ from robot import trajectoryJoints,cubic_trajectory_planning
 class Ui_pPPrint(object):
     
     def __init__ (self,joints,dhMatrix,to,tf):
+        self.joints=joints
 #         trajectoryJoints(dhMatrix, joints,t0)
 #         trajectoryJoints(dhMatrix, joints,tf)
 #         jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
 #         print(jointsEquations)
-    
+        
     def backToStart(self):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()
