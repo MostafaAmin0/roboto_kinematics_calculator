@@ -20,13 +20,14 @@ class Ui_MainWindow(object):
         self.joints=joints
         self.dhMatrix=dhMatrix
     
-    def openWindow(self):
+    def openWindow(self,mainWindow):
         to=self.toField.toPlainText()
         tf=self.tfField.toPlainText()
         self.window=QtWidgets.QMainWindow()
         self.ui=Ui_pPPrint(self.joints,self.dhMatrix,self.to,self.tf)
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -82,7 +83,7 @@ class Ui_MainWindow(object):
         self.aTextField_3.setFont(font)
         self.aTextField_3.setStyleSheet("background-color: rgb(215, 228, 253);")
         self.aTextField_3.setObjectName("aTextField_3")
-        self.nextButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
+        self.nextButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow(MainWindow))
         self.nextButton.setGeometry(QtCore.QRect(470, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -103,7 +104,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.label.setText(_translate("MainWindow", "Enter time interval"))
         self.aTextField.setText(_translate("MainWindow", "to"))
         self.aTextField_2.setText(_translate("MainWindow", "Y"))

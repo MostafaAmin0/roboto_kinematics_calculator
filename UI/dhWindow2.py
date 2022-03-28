@@ -22,12 +22,13 @@ class Ui_dhWindow2(object):
         self.joints=joints
         self.jointNumber=jointNumber
 
-    def openWindow(self):
+    def openWindow(self,mainWindow):
         self.dhMatrix=setDHInverse(self.dhMatrix)
         self.window=QtWidgets.QMainWindow()
         self.ui=Ui_MainWindow(self.joints,self.dhMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -108,7 +109,7 @@ class Ui_dhWindow2(object):
             
             self.dhMatrix.append(dh)
 
-        self.next_2 = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
+        self.next_2 = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow(MainWindow))
         self.next_2.setGeometry(QtCore.QRect(470, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -128,7 +129,7 @@ class Ui_dhWindow2(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         # self.label.setText(_translate("MainWindow", "For joint "))
         self.aTextField.setText(_translate("MainWindow", "a"))
         self.alphaTextField.setText(_translate("MainWindow", "Alpha"))

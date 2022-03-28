@@ -122,7 +122,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         # self.label.setText(_translate("MainWindow", "For joint "))
         self.aTextField.setText(_translate("MainWindow", "a"))
         self.alphaTextField.setText(_translate("MainWindow", "Alpha"))

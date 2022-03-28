@@ -27,11 +27,12 @@ class Ui_ikPrint(object):
         self.solution = ik(dhMatrix,joints, x=float(ikx), y=float(iky), z=float (ikz))
 #         self.solution = ik(dhMatrix,joints, x=ikx.toPlainText(), y=iky.toPlainText(), z=ikz.toPlainText(),roll=ikRoll.toPlainText(), pitch=ikPitch.toPlainText(), yaw=ikYaw.toPlainText())
         print(self.solution)
-    def backToStart(self):
+    def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -39,7 +40,7 @@ class Ui_ikPrint(object):
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart())
+        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart(MainWindow))
         self.back.setGeometry(QtCore.QRect(10, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -60,7 +61,7 @@ class Ui_ikPrint(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.back.setText(_translate("MainWindow", "Back"))
 
 

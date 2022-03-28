@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         self.joints=joints
         self.dhMatrix=dhMatrix
     
-    def openWindow(self):
+    def openWindow(self,mainWindow):
         self.poseMatrix.append(self.field1)
         self.poseMatrix.append(self.field2)
         self.poseMatrix.append(self.field3)
@@ -30,6 +30,18 @@ class Ui_MainWindow(object):
         self.ui=Ui_ikPrint(self.joints,self.dhMatrix,self.poseMatrix)
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
+        
+    def showOptions(self):
+        self.field5.show()
+        self.field4.show()
+        self.field6.show()
+        self.textEdit_12.show()
+        self.aTextField_4.show()
+        self.aTextField_5.show()
+        self.aTextField_6.show()
+        self.textEdit_8.show()
+        self.textEdit_9.show()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -37,10 +49,15 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.field1 = QtWidgets.QTextEdit(self.centralwidget)
+        self.field1.setGeometry(QtCore.QRect(360, 30, 71, 31))
+        self.field1.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.field1.setObjectName("field1")
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(170, 30, 71, 31))
         self.textEdit.setStyleSheet("background-color: rgb(254, 233, 226);")
         self.textEdit.setObjectName("textEdit")
+        
         self.aTextField = QtWidgets.QLabel(self.centralwidget)
         self.aTextField.setGeometry(QtCore.QRect(200, 30, 16, 31))
         font = QtGui.QFont()
@@ -80,10 +97,7 @@ class Ui_MainWindow(object):
         font.setPointSize(15)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.field1 = QtWidgets.QTextEdit(self.centralwidget)
-        self.field1.setGeometry(QtCore.QRect(360, 30, 71, 31))
-        self.field1.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.field1.setObjectName("field1")
+        
         self.field2 = QtWidgets.QTextEdit(self.centralwidget)
         self.field2.setGeometry(QtCore.QRect(360, 90, 71, 31))
         self.field2.setStyleSheet("background-color: rgb(255, 255, 255);")
@@ -92,13 +106,9 @@ class Ui_MainWindow(object):
         self.field3.setGeometry(QtCore.QRect(360, 150, 71, 31))
         self.field3.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.field3.setObjectName("field3")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(80, 180, 71, 41))
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(13)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
         self.field5 = QtWidgets.QTextEdit(self.centralwidget)
         self.field5.setGeometry(QtCore.QRect(360, 280, 71, 31))
         self.field5.setStyleSheet("background-color: rgb(255, 255, 255);")
@@ -147,13 +157,34 @@ class Ui_MainWindow(object):
         self.aTextField_5.setFont(font)
         self.aTextField_5.setStyleSheet("")
         self.aTextField_5.setObjectName("aTextField_5")
-        self.nextButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
+
+        self.field5.hide()
+        self.field4.hide()
+        self.field6.hide()
+        self.textEdit_12.hide()
+        self.aTextField_4.hide()
+        self.aTextField_5.hide()
+        self.aTextField_6.hide()
+        self.textEdit_8.hide()
+        self.textEdit_9.hide()
+
+        self.nextButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow(MainWindow))
         self.nextButton.setGeometry(QtCore.QRect(470, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.nextButton.setFont(font)
         self.nextButton.setStyleSheet("background-color: rgb(215, 228, 253);")
         self.nextButton.setObjectName("nextButton")
+
+        #Option button
+        self.optionButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.showOptions())
+        self.optionButton.setGeometry(QtCore.QRect(5, 200, 160, 41))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.optionButton.setFont(font)
+        self.optionButton.setStyleSheet("background-color: rgb(215, 228, 253);")
+        self.optionButton.setObjectName("optionButton")
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 593, 21))
@@ -168,17 +199,16 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.aTextField.setText(_translate("MainWindow", "X"))
         self.aTextField_2.setText(_translate("MainWindow", "Y"))
         self.aTextField_3.setText(_translate("MainWindow", "Z"))
         self.label.setText(_translate("MainWindow", "End Effector"))
-        self.label_2.setText(_translate("MainWindow", "Optional"))
         self.aTextField_4.setText(_translate("MainWindow", "Roll"))
         self.aTextField_6.setText(_translate("MainWindow", "Yaw"))
         self.aTextField_5.setText(_translate("MainWindow", "Pitch"))
         self.nextButton.setText(_translate("MainWindow", "Next"))
-
+        self.optionButton.setText(_translate("MainWindow", "option Parameters"))
 
 if __name__ == "__main__":
     import sys

@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 sys.path.insert(0, '../')
 from robot import fK,getJacobian
-
+# from choiceScreen import Ui_choiceScreen
 class Ui_fkandJWindow(object):
     
     def __init__(self,joints,dhMatrix):
@@ -22,11 +22,12 @@ class Ui_fkandJWindow(object):
         self.jacobian_matrix=getJacobian(joints,self.list_TF)
         print(self.jacobian_matrix)
 
-    def backToStart(self):
+    def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
         self.ui=Ui_choiceScreen()
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -34,7 +35,7 @@ class Ui_fkandJWindow(object):
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart())
+        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart(MainWindow))
         self.back.setGeometry(QtCore.QRect(10, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -55,7 +56,7 @@ class Ui_fkandJWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.back.setText(_translate("MainWindow", "Back"))
 
 

@@ -13,13 +13,14 @@ from dhWindow3 import Ui_dhWindow3
 
 
 class Ui_jointWindow3(object):
-    def openWindow(self):
+    def openWindow(self,mainWindow):
         joints=self.textEdit.toPlainText()
         if(joints!=''):
             self.window=QtWidgets.QMainWindow()
             self.ui=Ui_dhWindow3(joints,len(joints))
             self.ui.setupUi(self.window)
             self.window.show()
+            mainWindow.hide()
 
 
     def setupUi(self, jointWindow):
@@ -55,7 +56,7 @@ class Ui_jointWindow3(object):
         self.prismaticButton_2.setFont(font)
         self.prismaticButton_2.setStyleSheet("background-color: rgb(222, 201, 254);")
         self.prismaticButton_2.setObjectName("prismaticButton_2")
-        self.next = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
+        self.next = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow(jointWindow))
         self.next.setGeometry(QtCore.QRect(470, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -76,7 +77,7 @@ class Ui_jointWindow3(object):
 
     def retranslateUi(self, jointWindow):
         _translate = QtCore.QCoreApplication.translate
-        jointWindow.setWindowTitle(_translate("jointWindow", "MainWindow"))
+        jointWindow.setWindowTitle(_translate("jointWindow", "Robotics Project"))
         self.label.setText(_translate("jointWindow", "Please enter joints type"))
         self.revoluteButton.setText(_translate("jointWindow", "Revolute"))
         self.prismaticButton_2.setText(_translate("jointWindow", "Prismatic"))

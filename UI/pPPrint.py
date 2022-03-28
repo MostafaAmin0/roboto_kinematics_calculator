@@ -23,18 +23,19 @@ class Ui_pPPrint(object):
 #         jointsEquations = cubic_trajectory_planning(q,dq,t0,tf)
 #         print(jointsEquations)
         
-    def backToStart(self):
+    def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
         # self.ui=Ui_choiceScreen()
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(580, 504)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart())
+        self.back = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.backToStart(MainWindow))
         self.back.setGeometry(QtCore.QRect(10, 420, 91, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -55,7 +56,7 @@ class Ui_pPPrint(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.back.setText(_translate("MainWindow", "Back"))
 
 

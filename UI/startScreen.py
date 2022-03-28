@@ -19,6 +19,7 @@ class Ui_Window1(object):
         self.ui=Ui_choiceScreen()
         self.ui.setupUi(self.window)
         self.window.show()
+        Window1.hide()
 
     def setupUi(self, Window1):
         Window1.setObjectName("Window1")
@@ -60,7 +61,7 @@ class Ui_Window1(object):
 
     def retranslateUi(self, Window1):
         _translate = QtCore.QCoreApplication.translate
-        Window1.setWindowTitle(_translate("Window1", "MainWindow"))
+        Window1.setWindowTitle(_translate("Window1", "Robotics Project"))
         self.label.setText(_translate("Window1", "Roboitcs Project"))
         self.startButton.setText(_translate("Window1", "Start"))
 

@@ -14,7 +14,7 @@ from jointType2 import Ui_jointWindow2
 from jointType3 import Ui_jointWindow3
 
 class Ui_choiceScreen(object):
-    def openWindow(self,screen):
+    def openWindow(self,screen,mainWindow):
         self.window=QtWidgets.QMainWindow()
 
         if(screen=='1'):
@@ -25,6 +25,7 @@ class Ui_choiceScreen(object):
             self.ui=Ui_jointWindow3()
         self.ui.setupUi(self.window)
         self.window.show()
+        mainWindow.hide()
 
     def setupUi(self, Window2):
         Window2.setObjectName("Window2")
@@ -35,7 +36,7 @@ class Ui_choiceScreen(object):
         Window2.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(Window2)
         self.centralwidget.setObjectName("centralwidget")
-        self.fKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('1'))
+        self.fKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('1',Window2))
         self.fKButton.setGeometry(QtCore.QRect(210, 130, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
@@ -43,7 +44,7 @@ class Ui_choiceScreen(object):
         self.fKButton.setFont(font)
         self.fKButton.setStyleSheet("background-color: rgb(254, 233, 226);")
         self.fKButton.setObjectName("fKButton")
-        self.iKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('2'))
+        self.iKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('2',Window2))
         self.iKButton.setGeometry(QtCore.QRect(210, 220, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
@@ -51,7 +52,7 @@ class Ui_choiceScreen(object):
         self.iKButton.setFont(font)
         self.iKButton.setStyleSheet("background-color: rgb(215, 228, 253);")
         self.iKButton.setObjectName("iKButton")
-        self.pPButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('3'))
+        self.pPButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('3',Window2))
         self.pPButton.setGeometry(QtCore.QRect(210, 310, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
@@ -73,7 +74,7 @@ class Ui_choiceScreen(object):
 
     def retranslateUi(self, Window2):
         _translate = QtCore.QCoreApplication.translate
-        Window2.setWindowTitle(_translate("Window2", "MainWindow"))
+        Window2.setWindowTitle(_translate("Window2", "Robotics Project"))
         self.fKButton.setText(_translate("Window2", "Forward Kinematics"))
         self.iKButton.setText(_translate("Window2", "Inverse Kinematics"))
         self.pPButton.setText(_translate("Window2", "Path Planning "))
