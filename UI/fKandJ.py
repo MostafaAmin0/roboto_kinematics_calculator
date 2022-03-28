@@ -13,21 +13,25 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 sys.path.insert(0, '../')
 from robot import fK,getJacobian
-# from choiceScreen import Ui_choiceScreen
+# import choiceScreen 
+# # from choiceScreen import Ui_choiceScreen
 class Ui_fkandJWindow(object):
     
     def __init__(self,joints,dhMatrix):
         self.list_TF,self.x,self.y,self.z= fK(dhMatrix)
         print(self.list_TF,self.x,self.y,self.z)
+        self.joints=joints
         self.jacobian_matrix=getJacobian(joints,self.list_TF)
-        print(self.jacobian_matrix)
+        # print(self.jacobian_matrix)
+        
 
     def backToStart(self,mainWindow):
         self.window=QtWidgets.QMainWindow()
-        self.ui=Ui_choiceScreen()
+        self.ui=choiceScreen.Ui_choiceScreen()
         self.ui.setupUi(self.window)
         self.window.show()
         mainWindow.hide()
+        
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -42,6 +46,102 @@ class Ui_fkandJWindow(object):
         self.back.setFont(font)
         self.back.setStyleSheet("background-color: rgb(222, 201, 254);")
         self.back.setObjectName("back")
+        
+        
+        self.printText = QtWidgets.QLabel(self.centralwidget)
+        self.printText.setGeometry(QtCore.QRect(10, -20, 371, 91))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.printText.setFont(font)
+        self.printText.setObjectName("printText")
+        self.xLabel = QtWidgets.QLabel(self.centralwidget)
+        self.xLabel.setGeometry(QtCore.QRect(120, 50, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.xLabel.setFont(font)
+        self.xLabel.setObjectName("xLabel")
+        self.yLabel = QtWidgets.QLabel(self.centralwidget)
+        self.yLabel.setGeometry(QtCore.QRect(120, 90, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.yLabel.setFont(font)
+        self.yLabel.setObjectName("yLabel")
+        self.zLabel = QtWidgets.QLabel(self.centralwidget)
+        self.zLabel.setGeometry(QtCore.QRect(120, 130, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.zLabel.setFont(font)
+        self.zLabel.setObjectName("zLabel")
+        self.rollLabel = QtWidgets.QLabel(self.centralwidget)
+        self.rollLabel.setGeometry(QtCore.QRect(350, 50, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.rollLabel.setFont(font)
+        self.rollLabel.setObjectName("rollLabel")
+        self.pitchLabel = QtWidgets.QLabel(self.centralwidget)
+        self.pitchLabel.setGeometry(QtCore.QRect(350, 90, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.pitchLabel.setFont(font)
+        self.pitchLabel.setObjectName("pitchLabel")
+        self.yawLabel = QtWidgets.QLabel(self.centralwidget)
+        self.yawLabel.setGeometry(QtCore.QRect(350, 130, 47, 31))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(14)
+        self.yawLabel.setFont(font)
+        self.yawLabel.setObjectName("yawLabel")
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(160, 50, 71, 31))
+        
+        
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_2.setGeometry(QtCore.QRect(160, 90, 71, 31))
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_3 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_3.setGeometry(QtCore.QRect(160, 130, 71, 31))
+        self.textEdit_3.setObjectName("textEdit_3")
+        self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_4.setGeometry(QtCore.QRect(410, 50, 71, 31))
+        self.textEdit_4.setObjectName("textEdit_4")
+        self.textEdit_5 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_5.setGeometry(QtCore.QRect(410, 90, 71, 31))
+        self.textEdit_5.setObjectName("textEdit_5")
+        self.textEdit_6 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_6.setGeometry(QtCore.QRect(410, 130, 71, 31))
+        self.textEdit_6.setObjectName("textEdit_6")
+        self.printText_2 = QtWidgets.QLabel(self.centralwidget)
+        self.printText_2.setGeometry(QtCore.QRect(10, 150, 371, 91))
+        
+        # Print 
+        self.textEdit.setText(str(self.x))
+        self.textEdit_2.setText(str(self.y))
+        self.textEdit_3.setText(str(self.z)) 
+        # self.textEdit.setText(str(self.Roll))
+        # self.textEdit.setText(str(self.x))
+        # self.textEdit.setText(str(self.x))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.printText_2.setFont(font)
+        self.printText_2.setObjectName("printText_2")
+        
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(16)
+        self.textEdit_7 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_7.setGeometry(QtCore.QRect(70, 210, 440, 200))
+        self.textEdit_7.setFont(font)
+        self.textEdit_7.setObjectName("textEdit")
+        self.textEdit_7.setText(str(self.jacobian_matrix))
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 587, 21))
@@ -58,6 +158,14 @@ class Ui_fkandJWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Robotics Project"))
         self.back.setText(_translate("MainWindow", "Back"))
+        self.printText.setText(_translate("MainWindow", "The End Effector Pose is"))
+        self.xLabel.setText(_translate("MainWindow", "X"))
+        self.yLabel.setText(_translate("MainWindow", "Y"))
+        self.zLabel.setText(_translate("MainWindow", "Z"))
+        self.rollLabel.setText(_translate("MainWindow", "Roll"))
+        self.pitchLabel.setText(_translate("MainWindow", "Pitch"))
+        self.yawLabel.setText(_translate("MainWindow", "Yaw"))
+        self.printText_2.setText(_translate("MainWindow", "Jacobian Matrix"))
 
 
 if __name__ == "__main__":
