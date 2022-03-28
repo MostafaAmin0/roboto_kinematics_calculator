@@ -92,7 +92,7 @@ def An_matrix(a,alpha,d,theta):
 # A1----An
 def list_A_matrix(DH):
 #     if type(DH) != np.array :
-    DH=np.array(DH)
+    DH=np.array(DH, dtype=float)
     list_A = []
     for i in range(len(DH)):
         mat=np.around(An_matrix(DH[i][0],DH[i][1],DH[i][2],DH[i][3]),1)
@@ -507,7 +507,7 @@ def plot_trajectory(jointsEquations, initalTime = 0, finalTime = 1, steps = 100)
         fig.tight_layout()
 #         plt.show()
 
-        fig.savefig(f"trajectory plots/{jointName}.png", dpi=100, facecolor=('white'))
+        fig.savefig(f"{jointName}.png", dpi=100, facecolor=('white'))
 
 def get_trajectory (DH,joints,initialTime , finalTime):
 
