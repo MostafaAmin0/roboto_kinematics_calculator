@@ -16,7 +16,7 @@ class Ui_jointWindow2(object):
         joints=self.textEdit.toPlainText()
         if(joints!=''):
             self.window=QtWidgets.QMainWindow()
-            self.ui=Ui_dhWindow2(joints,len(joints))
+            self.ui=Ui_dhWindow2(joints.upper(),len(joints))
             self.ui.setupUi(self.window)
             self.window.show()
             mainWindow.hide()
