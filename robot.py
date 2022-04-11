@@ -350,7 +350,7 @@ def inv_jacobian(jacobian):
     jacobianTrans=np.transpose(jacobian)
     jacobianTrans+=0.
     temp = np.dot(jacobianTrans,jacobian)
-    temp=np.transpose(temp)
+    temp=np.inv(temp)
     temp=np.around(temp,1)
 
     jacobianInv=np.dot(temp,jacobianTrans)
