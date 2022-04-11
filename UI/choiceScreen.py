@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from jointType import Ui_jointWindow
 from jointType2 import Ui_jointWindow2
 from jointType3 import Ui_jointWindow3
+from jointType4 import Ui_jointWindow4
 
 class Ui_choiceScreen(object):
     def openWindow(self,screen,mainWindow):
@@ -23,6 +24,8 @@ class Ui_choiceScreen(object):
             self.ui=Ui_jointWindow2()
         elif(screen=='3'):
             self.ui=Ui_jointWindow3()
+        elif(screen=='4'):
+            self.ui=Ui_jointWindow4()
         self.ui.setupUi(self.window)
         self.window.show()
         mainWindow.hide()
@@ -37,29 +40,42 @@ class Ui_choiceScreen(object):
         self.centralwidget = QtWidgets.QWidget(Window2)
         self.centralwidget.setObjectName("centralwidget")
         self.fKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('1',Window2))
-        self.fKButton.setGeometry(QtCore.QRect(210, 130, 171, 51))
+        self.fKButton.setGeometry(QtCore.QRect(200, 90, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(12)
         self.fKButton.setFont(font)
-        self.fKButton.setStyleSheet("background-color: rgb(254, 233, 226);")
+        self.fKButton.setStyleSheet("background-color: rgb(215, 228, 253);")
         self.fKButton.setObjectName("fKButton")
         self.iKButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('2',Window2))
-        self.iKButton.setGeometry(QtCore.QRect(210, 220, 171, 51))
+        self.iKButton.setGeometry(QtCore.QRect(200, 180, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(12)
         self.iKButton.setFont(font)
-        self.iKButton.setStyleSheet("background-color: rgb(215, 228, 253);")
+        self.iKButton.setStyleSheet("background-color: rgb(254, 233, 226);")
         self.iKButton.setObjectName("iKButton")
+        
+        self.jButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('4',Window2))
+        self.jButton.setGeometry(QtCore.QRect(200, 270, 171, 51))
+        font = QtGui.QFont()
+        font.setFamily("Sitka")
+        font.setPointSize(12)
+        self.jButton.setFont(font)
+        self.jButton.setStyleSheet("background-color: rgb(222, 201, 254);")
+        self.jButton.setObjectName("pPButton")
+        
         self.pPButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow('3',Window2))
-        self.pPButton.setGeometry(QtCore.QRect(210, 310, 171, 51))
+        self.pPButton.setGeometry(QtCore.QRect(200, 360, 171, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(12)
         self.pPButton.setFont(font)
-        self.pPButton.setStyleSheet("background-color: rgb(222, 201, 254);")
+        self.pPButton.setStyleSheet("background-color: rgb(215, 228, 253);")
         self.pPButton.setObjectName("pPButton")
+        
+
+        
         Window2.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Window2)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 573, 21))
@@ -78,6 +94,8 @@ class Ui_choiceScreen(object):
         self.fKButton.setText(_translate("Window2", "Forward Kinematics"))
         self.iKButton.setText(_translate("Window2", "Inverse Kinematics"))
         self.pPButton.setText(_translate("Window2", "Path Planning "))
+        self.jButton.setText(_translate("Window2", "Jacobian"))
+
 
 
 if __name__ == "__main__":
