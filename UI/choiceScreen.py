@@ -93,7 +93,7 @@ class Ui_choiceScreen(object):
         Window2.setWindowTitle(_translate("Window2", "Robotics Project"))
         self.fKButton.setText(_translate("Window2", "Forward Kinematics"))
         self.iKButton.setText(_translate("Window2", "Inverse Kinematics"))
-        self.pPButton.setText(_translate("Window2", "Path Planning "))
+        self.pPButton.setText(_translate("Window2", "Trajectory Planning "))
         self.jButton.setText(_translate("Window2", "Jacobian"))
 
 

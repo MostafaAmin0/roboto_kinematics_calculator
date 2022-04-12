@@ -28,17 +28,17 @@ class Ui_Window1(object):
         self.centralwidget = QtWidgets.QWidget(Window1)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(180, 90, 231, 91))
+        self.label.setGeometry(QtCore.QRect(180, 40, 431, 250))
         font = QtGui.QFont()
         font.setFamily("Sitka")
-        font.setPointSize(20)
+        font.setPointSize(18)
         font.setBold(True)
         font.setItalic(False)
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.startButton = QtWidgets.QPushButton(self.centralwidget,clicked= lambda:self.openWindow())
-        self.startButton.setGeometry(QtCore.QRect(220, 250, 131, 51))
+        self.startButton.setGeometry(QtCore.QRect(220, 350, 131, 51))
         font = QtGui.QFont()
         font.setFamily("Sitka")
         font.setPointSize(16)
@@ -62,7 +62,7 @@ class Ui_Window1(object):
     def retranslateUi(self, Window1):
         _translate = QtCore.QCoreApplication.translate
         Window1.setWindowTitle(_translate("Window1", "Robotics Project"))
-        self.label.setText(_translate("Window1", "Roboitcs Project"))
+        self.label.setText(_translate("Window1", "Roboitcs Project 2022"+"\n\n     Mariam Gad\n     Mostafa Amin\n     Mostafa Ayman\n     Mostafa Saad\n     Maha Elkomey\n     Mayar Hanafy"))
         self.startButton.setText(_translate("Window1", "Start"))
 
 
