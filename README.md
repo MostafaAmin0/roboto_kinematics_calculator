@@ -1,4 +1,4 @@
-# robotics_project
+# Robotics Project
 this is python project for calculating forward kienmatics & reverse kinematics & jacobian & Trajectory planning
 
 https://user-images.githubusercontent.com/47722373/177286231-2207905d-e70c-4c12-8617-7d01e2f89392.mp4
